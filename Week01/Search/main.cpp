@@ -9,7 +9,7 @@ using namespace std;
 int main()
 {
     //Seed the rng for random generation
-    srand(time(0));
+    srand(static_cast<int>(time(0)));
 
     //----------------------Correctness Test------------------------
 	int smallNumsSize = 8;
@@ -23,7 +23,7 @@ int main()
 
     //----------------Test timing with Large Numbers----------------
     const int BIGNUM_SIZE = 1000;
-    int bigNums[BIGNUM_SIZE];
+    int* bigNums = new int[BIGNUM_SIZE];
 
     //Fill with random numbers and sort
     genNums(bigNums, BIGNUM_SIZE);
