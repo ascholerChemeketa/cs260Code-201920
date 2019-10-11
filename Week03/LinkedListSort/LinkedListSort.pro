@@ -3,11 +3,11 @@ CONFIG   -= debug_and_release
 CONFIG   -= app_bundle
 
 TEMPLATE = app
-SOURCES += main.cpp \
-    SimpleLinkedList.cpp
+SOURCES += main.cpp
 
 
-CONFIG += c++11
+QMAKE_CXXFLAGS += -std=c++11
+QMAKE_LFLAGS += -std=c++11
 
 QMAKE_CXXFLAGS += -Wmissing-include-dirs
 QMAKE_CXXFLAGS += -Wfloat-equal
@@ -23,5 +23,7 @@ QMAKE_CXXFLAGS += -pedantic
 QMAKE_CXXFLAGS += -pedantic-errors
 
 HEADERS += \
-    SimpleLinkedList.h
+    LinkedList.h \
+    ListNode.h
+
 
