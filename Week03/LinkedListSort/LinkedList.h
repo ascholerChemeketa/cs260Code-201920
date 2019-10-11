@@ -41,6 +41,10 @@ public:
    */
   void mergeSort();
 
+  /**
+   * @brief mergeSort Sorts this linked list using quicksort algorithm
+   */
+  void qSort();
 
   LinkedList();
 
@@ -148,6 +152,42 @@ void LinkedList<T>::mergeSort() {
 
   //Combine them back into one list
   this->mergeIn(secondList);
+}
+
+
+template <class T>
+void LinkedList<T>::qSort() {
+  if(this->length <= 1)
+      return;
+
+  //Partition
+  //Store middle value as pivot
+  T pivotValue = removeStart();
+
+  //Move all other values into small/large lists
+  LinkedList<T> small;
+  LinkedList<T> large;
+  while(head != nullptr) {
+      if(retrieveStart() <= pivotValue) {
+          small.insertEnd(removeStart());
+      } else {
+          large.insertEnd(removeStart());
+      }
+  }
+
+  //Recursively sort halves
+  small.qSort();
+  large.qSort();
+
+
+  //Combine them back into this list which should be empty
+  while(small.head != nullptr) {
+      insertEnd(small.removeStart());
+  }
+  insertEnd(pivotValue);
+  while(large.head != nullptr) {
+      insertEnd(large.removeStart());
+  }
 }
 
 

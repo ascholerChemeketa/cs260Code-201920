@@ -74,15 +74,24 @@ int main()
 
     ////-------------MergeSort-----------------
 
-//    cout << endl << "Making a list with random junk and sorting:" << endl;
+//    cout << endl << "Making a list with random junk and sorting with mergesort:" << endl;
 //    LinkedList<int> myList3;
-//    srand(time(nullptr));
 //    for(int i = 0; i < 15; i++) {
 //        myList3.insertEnd(rand()%100);
 //    }
 //    myList3.mergeSort();
 //    cout << myList3;
 
+
+    ////-------------QuickSort-----------------
+
+//    cout << endl << "Making a list with random junk and sorting with quicksort:" << endl;
+//    LinkedList<int> myList4;
+//    for(int i = 0; i < 15; i++) {
+//        myList4.insertEnd(rand()%100);
+//    }
+//    myList4.qSort();
+//    cout << myList4;
 
     return 0;
 }
