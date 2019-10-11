@@ -11,21 +11,21 @@ using namespace std;
 int getRandom();
 
 int main() {
-    const int DATA_SIZE = 5000;
+    for(int size = 500; size <= 5000000; size *= 10) {
+        clock_t start = clock();
 
-    clock_t start = clock();
+        ArrayList<int> myList;
+        for(int i = 0; i < size; i++) {
+            myList.insertEnd(getRandom());
+            //myList.insertAt(0, getRandom());
+        }
 
-    ArrayList<int> myList;
-    for(int i = 0; i < DATA_SIZE; i++) {
-        myList.insertEnd(getRandom());
+        clock_t duration = clock() - start;
+        cout << fixed << setprecision(5);
+        cout << "Adding " << size << " elemenets took: ";
+        cout << (1.0 * duration / CLOCKS_PER_SEC) << " seconds" << endl;
+        cout << "      ~" << (1.0 * duration / CLOCKS_PER_SEC)  / size * 1000000000 << " ns per element" << endl;
     }
-
-    clock_t duration = clock() - start;
-    cout << fixed << setprecision(5);
-    cout << "Took: " << (1.0 * duration / CLOCKS_PER_SEC) << " seconds" << endl;
-    cout << "      ~" << (1.0 * duration / CLOCKS_PER_SEC)  / DATA_SIZE * 1000000000 << " ns per element" << endl;
-
-    return 0;
 }
 
 
