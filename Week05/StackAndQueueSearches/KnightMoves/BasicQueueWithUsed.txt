@@ -1,31 +1,15 @@
 #include <iostream>
 #include <vector>
+#include <deque>
 
-#include "Queue.h"
 #include "Location.h"
 using namespace std;
 
-///----------------------Vector helper functions-------------------------
-
-void printVector(const vector<Location>& locList) {
-    for(unsigned int i = 0; i < locList.size(); ++i) {
-        cout << locList[i] << " ";
-    }
-    cout << endl;
-}
-
-bool containsLocation(const vector<Location>& locList, const Location& loc) {
-    for(unsigned int i = 0; i < locList.size(); ++i) {
-        if(locList[i] == loc)
-            return true;
-    }
-    return false;
-}
 
 vector<Location> getPossibleMoves(const Location& from) {
     vector<Location> possibleMoves;
 
-    ///Ugly for loops generate each possible move for a knight
+    //Ugly for loops generate each possible move for a knight
     //Can move up to -2 to +2 rows
     for(int rowMod = -2; rowMod <= 2; rowMod++) {
         if(rowMod == 0)
@@ -53,9 +37,27 @@ vector<Location> getPossibleMoves(const Location& from) {
     return possibleMoves;
 }
 
-///-------------------------------------------------------------------
+void printQueue(deque<Location>& q) {
+    for(auto it = q.begin(); it != q.end(); ++it) {
+        cout << *it << " ";
+    }
+    cout << endl;
+}
 
+void printVector(const vector<Location>& locList) {
+    for(unsigned int i = 0; i < locList.size(); ++i) {
+        cout << locList[i] << " ";
+    }
+    cout << endl;
+}
 
+bool containsLocation(const vector<Location>& locList, const Location& loc) {
+    for(unsigned int i = 0; i < locList.size(); ++i) {
+        if(locList[i] == loc)
+            return true;
+    }
+    return false;
+}
 
 int main()
 {
@@ -63,8 +65,9 @@ int main()
     Location goalLocation(8, 8);    //goal location
 
     //Initialize search storage - queue of locations we know we can reach
-    Queue<Location> storage;
-    storage.enqueue(loc1);
+    //Stored as a deque to allow easier printing
+    deque<Location> storage;
+    storage.push_back(loc1);
 
     //List to keep track of states we already know about - avoid cycles
     vector<Location> seenLocations;
@@ -74,11 +77,12 @@ int main()
         cout << "\n----------------------------------------" << endl;
         cout << "Seen states: " << endl;
         printVector(seenLocations);
-        cout << "States to process:" << endl;
-        cout << storage << endl;
+        cout << "Current work queue of locations to try:" << endl;
+        printQueue(storage);
 
-        ///Get the next state to explore from the queue
-        Location curLocation = storage.dequeue();
+        //Get the next state to explore from the queue
+        Location curLocation = storage.front();
+        storage.pop_front();
 
         if(curLocation == goalLocation) {
             cout << "Found the path to: " << curLocation << endl;
@@ -94,12 +98,11 @@ int main()
             if( !containsLocation(seenLocations, move) ) {
                 //Add the new location to the queue of things to try
                 cout << move << " ";
-                storage.enqueue(move);
+                storage.push_back(move);
 
                 //And add to seen list
                 seenLocations.push_back(move);
             }
         }
     }
-
 }

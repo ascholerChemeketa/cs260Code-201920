@@ -29,7 +29,6 @@ OTHER_FILES += \
     BasicQueue.txt
 
 HEADERS += \
-    Queue.h \
     Location.h
 
 
