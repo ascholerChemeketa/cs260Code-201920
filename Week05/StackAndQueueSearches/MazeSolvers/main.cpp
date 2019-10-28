@@ -1,30 +1,28 @@
 #include <iostream>
 #include <exception>
 #include <cstdlib>
-#include <deque>
+#include <stack>
+#include <queue>
 #include <vector>
 
 using namespace std;
 
 #include "Maze.h"
 
-typedef deque<Maze> mazeQueue;
-typedef deque<Maze> mazeStack;
-
 void findPathQueue(Maze& startMaze) {
 
-    //maintain stack of paths to try
-    mazeQueue pathsToTryQueue;
-    pathsToTryQueue.push_back(startMaze);
+    //maintain queue of paths to try
+    queue<Maze> pathsToTryQueue;
+    pathsToTryQueue.push(startMaze);
 
     //as long as there are paths to try
     while(!pathsToTryQueue.empty()) {
         //Get the most recently found new path
         Maze curMaze = pathsToTryQueue.front();
         //Remove it from the queue
-        pathsToTryQueue.pop_front();
+        pathsToTryQueue.pop();
 
-        if(! curMaze.curLocationValid()) {
+        if(!curMaze.curLocationValid()) {
             continue; //dead end
         }
 
@@ -37,20 +35,19 @@ void findPathQueue(Maze& startMaze) {
             break;
         }
 
-        //push all neighbors to stack
-        Maze copy4 = curMaze;
-        copy4.startRow++;
-        pathsToTryQueue.push_back(copy4);  //down
-        Maze copy3= curMaze;
-        copy3.startRow--;
-        pathsToTryQueue.push_back(copy3);  //up
-        Maze copy2 = curMaze;
-        copy2.startCol++;
-        pathsToTryQueue.push_back(copy2);  //right
+        //add all neighbors to queue
         Maze copy1 = curMaze;
         copy1.startCol--;
-        pathsToTryQueue.push_back(copy1);  //left
-
+        pathsToTryQueue.push(copy1);  //left
+        Maze copy2 = curMaze;
+        copy2.startCol++;
+        pathsToTryQueue.push(copy2);  //right
+        Maze copy3= curMaze;
+        copy3.startRow--;
+        pathsToTryQueue.push(copy3);  //up
+        Maze copy4 = curMaze;
+        copy4.startRow++;
+        pathsToTryQueue.push(copy4);  //down
     }
 }
 
@@ -59,16 +56,16 @@ void findPathQueue(Maze& startMaze) {
 void findPathStack(Maze& startMaze) {
 
     //maintain stack of paths to try
-    mazeStack pathsToTryStack;
-    pathsToTryStack.push_back(startMaze);
+    stack<Maze> pathsToTryStack;
+    pathsToTryStack.push(startMaze);
 
     //as long as there are paths to try
     while(!pathsToTryStack.empty()) {
         //Get the most recently found new path
-        Maze curMaze = pathsToTryStack.back();
-        pathsToTryStack.pop_back();
+        Maze curMaze = pathsToTryStack.top();
+        pathsToTryStack.pop();
 
-        if(! curMaze.curLocationValid()) {
+        if(!curMaze.curLocationValid()) {
             continue; //dead end
         }
 
@@ -84,25 +81,26 @@ void findPathStack(Maze& startMaze) {
         //push all neighbors to stack
         Maze copy4 = curMaze;
         copy4.startRow++;
-        pathsToTryStack.push_back(copy4);  //down
+        pathsToTryStack.push(copy4);  //down
         Maze copy3= curMaze;
         copy3.startRow--;
-        pathsToTryStack.push_back(copy3);  //up
+        pathsToTryStack.push(copy3);  //up
         Maze copy2 = curMaze;
         copy2.startCol++;
-        pathsToTryStack.push_back(copy2);  //right
+        pathsToTryStack.push(copy2);  //right
         Maze copy1 = curMaze;
         copy1.startCol--;
-        pathsToTryStack.push_back(copy1);  //left
+        pathsToTryStack.push(copy1);  //left
 
     }
 }
 
 
 
-void findPathRecursive(Maze& curMaze) {
-    if(! curMaze.curLocationValid()) {
-        return; //dead end
+void findPathRecursive(Maze& curMaze, bool& isDone) {
+    if(!curMaze.curLocationValid() || isDone) {
+        return; //Either a dead end, or we already
+                //found a solution on some other recursive call
     }
 
     //mark our copy with the move
@@ -110,22 +108,22 @@ void findPathRecursive(Maze& curMaze) {
     curMaze.printMaze();
 
     if(curMaze.atGoal()) {
-        //found it - throw exception to exit all recursion levels
-        throw string("done");
+        curMaze.printMaze();
+        isDone = true;
     }
 
     Maze copy1 = curMaze;
     copy1.startCol--;
-    findPathRecursive(copy1);  //left
+    findPathRecursive(copy1, isDone);  //left
     Maze copy2 = curMaze;
     copy2.startCol++;
-    findPathRecursive(copy2);  //right
+    findPathRecursive(copy2, isDone);  //right
     Maze copy3= curMaze;
     copy3.startRow--;
-    findPathRecursive(copy3);  //up
+    findPathRecursive(copy3, isDone);  //up
     Maze copy4 = curMaze;
     copy4.startRow++;
-    findPathRecursive(copy4);  //down
+    findPathRecursive(copy4, isDone);  //down
 }
 
 
@@ -143,22 +141,15 @@ int main()
     cout << "(Hint: 5 5 is interesting to find from 7 7)" << endl;
     cin >> theMaze.goalRow >> theMaze.goalCol ;
 
-    //recursive function throws an exception to stop
-    // all recursion when a path is found.
-    try {
-        cout << "Recursive stack based search result:" << endl;
-        cout << "Enter to continue...";
-        cin.clear();
-        cin.get();
-        Maze mazeCopy1(theMaze);
-        findPathRecursive(mazeCopy1);
-    } catch (string& message) {
-        //we are done
-    }
+
+    Maze mazeCopy1(theMaze);
+    bool found = false;
+    findPathRecursive(mazeCopy1, found);
 
 
     cout << "Stack based iterative search result:" << endl;
     cout << "Enter to continue...";
+    cin.ignore(256, '\n');
     cin.clear();
     cin.get();
     Maze mazeCopy2(theMaze);
